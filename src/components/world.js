@@ -1,0 +1,88 @@
+import { Footer, Header } from "./common";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+export default function World() {
+    return (<>
+        <Header />
+        <Banner />
+        <News />
+        <Footer />
+    </>);
+};
+
+function FatchAPI() {
+    const [data, setData] = useState([]);
+    const apiget = () => {
+        fetch("https://inshortsapi.vercel.app/news?category=world")
+            .then((response) => response.json())
+            .then((json) => {
+                setData(json.data)
+            })
+    }
+    useEffect(
+        () => {
+            apiget();
+            const interval = setInterval(
+                () => {
+                    apiget();
+                }, 10000
+            )
+            return () => clearInterval(interval);
+        }, []
+    )
+    return (<>
+        {
+            data.map((items, i) =>
+            (
+                <div class="col-lg-4 col-md-6 mt-md-4 mt-sm-4">
+                    <div class="grids5-info">
+                        <a href="/" class="d-block zoom">
+                            <img src={items.imageUrl} alt="" class ="img-fluid news-image" style={{width:"100%", height:"350px" }} />
+                        </a>
+                        <div class="blog-info">
+                            <h4 style={{ overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}><a href="/">{items.title}</a></h4>
+                            <p class="date"><span class="fa fa-calendar mr-2"></span> {items.date},{items.time}</p>
+                            <p style={{ overflow: "hidden", display: "-webkit-box", WebkitLineClamp: "3", WebkitBoxOrient: "vertical" }}>{items.content}</p>
+                            <a href={items.readMoreUrl} class="btn btn-news mt-4">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            ))
+        }
+    </>)
+}
+
+function Banner() {
+    return (<>
+        <section class="w3l-about-breadcrumb">
+            <div class="breadcrumb-bg breadcrumb-bg-about py-sm-5 pt-5 pb-4">
+                <div class="container pt-lg-5 pt-md-3 py-lg-4 pb-md-3">
+                    <h2 class="title">WORLD NEWS</h2>
+                    <ul class="breadcrumbs-custom-path mt-2">
+                        <li><Link to="/">Home</Link></li>
+                        <li class="mx-2">/ </li>
+                        <li class="active"> World </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </>)
+};
+
+function News() {
+    return (<>
+        <div class="w3l-news" id="news">
+            <section id="grids5-block" class="py-5">
+                <div class="container py-lg-5 py-md-4 py-2">
+                    <h3 class="title-big text-center">World News</h3>
+                    <div class="row mt-lg-5 mt-4" id="news api">
+                    <FatchAPI />
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </>)
+}
+
